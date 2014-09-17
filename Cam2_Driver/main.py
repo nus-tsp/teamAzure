@@ -4,7 +4,7 @@ from frame_metadata import FrameMetadata
 import cv2
 import time
 
-def fetch_snapshots_async(running_time, snapshot_interval, analyzer):
+def fetch_snapshots_sync(analyzer):
     """
     Simulate fetching images in group of camera_count, give it to analyzer
     """
@@ -12,38 +12,54 @@ def fetch_snapshots_async(running_time, snapshot_interval, analyzer):
     frames = []
     frame_metadata = []
 
-    frames.append(cv2.imread('/Users/archer/Downloads/img1.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frames.append(cv2.imread('Images/img1.jpg', cv2.CV_LOAD_IMAGE_COLOR))
     frame_metadata.append(FrameMetadata(camera_list[0]))
-    frames.append(cv2.imread('/Users/archer/Downloads/img2.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frames.append(cv2.imread('Images//img2.jpg', cv2.CV_LOAD_IMAGE_COLOR))
     frame_metadata.append(FrameMetadata(camera_list[1]))
-    frames.append(cv2.imread('/Users/archer/Downloads/img3.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frames.append(cv2.imread('Images//img3.jpg', cv2.CV_LOAD_IMAGE_COLOR))
     frame_metadata.append(FrameMetadata(camera_list[2]))
-    frames.append(cv2.imread('/Users/archer/Downloads/img4.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frames.append(cv2.imread('Images//img4.jpg', cv2.CV_LOAD_IMAGE_COLOR))
     frame_metadata.append(FrameMetadata(camera_list[3]))
-    frames.append(cv2.imread('/Users/archer/Downloads/img5.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frames.append(cv2.imread('Images//img5.jpg', cv2.CV_LOAD_IMAGE_COLOR))
     frame_metadata.append(FrameMetadata(camera_list[4]))
 
 
     frame_temp = []
     frame_metadata_temp = []
 
-    for i in range(7):
+    for i in range(5):
         frame_temp.append(frames)
         frame_metadata_temp.append(frame_metadata)
         analyzer.receive_frames(frame_temp,frame_metadata_temp)
         analyzer.on_new_frame()
         #time.sleep(running_time/snapshot_interval)
 
-def fetch_snapshots_sync(running_time, cam_count, snapshot_interval, analyzer):
+def fetch_snapshots_async(analyzer):
     """
     Simulate fetching images and give it to analyzer
     """
     frames = []
-    frames.append(cv2.imread('/Users/archer/Downloads/img1.jpg', cv2.CV_LOAD_IMAGE_COLOR))
-    frames.append(cv2.imread('/Users/archer/Downloads/img2.jpg', cv2.CV_LOAD_IMAGE_COLOR))
-    frames.append(cv2.imread('/Users/archer/Downloads/img3.jpg', cv2.CV_LOAD_IMAGE_COLOR))
-    frames.append(cv2.imread('/Users/archer/Downloads/img4.jpg', cv2.CV_LOAD_IMAGE_COLOR))
-    frames.append(cv2.imread('/Users/archer/Downloads/img5.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frame_metadata = []
+    frames.append(cv2.imread('Images/img1.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frame_metadata.append(FrameMetadata(camera_list[0]))
+    frames.append(cv2.imread('Images//img2.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frame_metadata.append(FrameMetadata(camera_list[1]))
+    frames.append(cv2.imread('Images//img3.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frame_metadata.append(FrameMetadata(camera_list[2]))
+    frames.append(cv2.imread('Images//img4.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frame_metadata.append(FrameMetadata(camera_list[3]))
+    frames.append(cv2.imread('Images//img5.jpg', cv2.CV_LOAD_IMAGE_COLOR))
+    frame_metadata.append(FrameMetadata(camera_list[4]))
+
+
+
+    frame_temp = []
+    frame_metadata_temp = []
+    for i in range(5):
+        frame_temp.append(frames[i])
+        frame_metadata_temp.append(frame_metadata[i])
+        analyzer.receive_frames(frame_temp, frame_metadata_temp)
+        analyzer.on_new_frame()
 
 #Get configuration from database, setup analyzer
 
@@ -75,10 +91,10 @@ camera_list = get_camera_list(cid_list)
 #if analyzer.sync is true, fetch camera snapshots in group, wait until all snapshots are available
 
 #when new frame is received from the system
-if sync == False:
-    fetch_snapshots_async(running_time, snapshot_interval, analyzer)
+if not sync:
+    fetch_snapshots_async(analyzer)
 else:
-    fetch_snapshots_sync(running_time, camera_count, snapshot_interval, analyzer)
+    fetch_snapshots_sync(analyzer)
 
 
 #finalize

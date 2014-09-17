@@ -27,7 +27,7 @@ class MyAnalyzer(Analyzer):
 
      # Get frame
 
-     frame = self.get_frame()
+     frame = self.get_new_frames()
 
      # Get frame metadata
 

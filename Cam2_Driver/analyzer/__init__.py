@@ -37,18 +37,28 @@ class Analyzer:
         return type: frame[]
 
         """
+        last_index = len(self.__frames) - 1
+        return self.__frames[last_index]
+
     def get_frame(self, *args):
         """
         Load nth previous frame from the camera with cid:
         TODO
         """
-        return self.__frames[0][0]
+        if (not len(args)):
+            last_index = len(self.__frames) - 1
+            return self.__frames[last_index]
+        elif (len(args == 1)):
+            return self.__frames[args[0]]
 
-    def get_frame_metadata(self, *args):
+
+    def get_frame_metadata(self):
         """
         TODO
         """
-        return self.__frame_metadata[0][0]
+        last_index = len(self.__frame_metadata) - 1
+        return self.__frame_metadata[last_index]
+
 
     def save(self, path, file):
         """
