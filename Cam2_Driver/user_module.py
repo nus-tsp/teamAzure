@@ -3,7 +3,7 @@ from analyzer import Analyzer
 from frame_metadata import FrameMetadata
 from camera_metadata import CameraMetadata
 import datetime
-
+import matplotlib.pyplot as plt
 import numpy as np
 
 import cv2
@@ -12,53 +12,44 @@ class MyAnalyzer(Analyzer):
 
  def initialize(self):
 
-
-     # Initialize statistics
-
-     self.motion_frames = 0
-
-     self.total_frames = 0
-
-     self.total_motion = 0
-
-     self.output_text = ''
+    self.__results = {}
+    self.__index = {}
+    self.__images = []
+    self.final_results = {}
 
  def on_new_frame(self):
 
-     # Get frame
+    images = self.get_new_frames()
+    i = 0
+    for image in images:
+        self.__images.append(cv2.cvtColor(image,cv2.COLOR_BGR2RGB))
 
-     frame = self.get_new_frames()
+        hist = cv2.calcHist([image],[0,1,2],None,[64,64,64],[0,256,0,256,0,256])
+        hist = cv2.normalize(hist).flatten()
+        self.__index[i] = hist
+        i = i + 1
 
-     # Get frame metadata
+    for (k,hist) in self.__index.items():
+        d = cv2.compareHist(self.__index[0],hist,cv2.cv.CV_COMP_CORREL)
+        self.__results[k] = d
 
-     frame_metadata = self.get_frame_metadata()
-
-     # Get date/time of frame, time is UTC
-
-     datetime = frame_metadata.datetime.strftime('%Y-%m-%d_%H-%M-%S')
-
-     # Get camera id
-
-     camera_id = frame_metadata.camera_metadata.camera_id
-
-     # Apply background subtraction to frame
-
-
-     # Calculate percent of mask that is foreground
-
-
-     # Add frame percentage to total, used to calculate average percent motion
-
-
-     # Count frame as containing motion if percent motion is greater than 0.5%
-
-
-
-     # Increment the total number of frames
-
+    self.__results = sorted([(hist,k)for (k,hist)in self.__results.items()],reverse = True)
 
  def finalize(self):
-    """
+    fig = plt.figure("Doge")
 
-    :return:
-    """
+    ax = fig.add_subplot(1,1,1)
+    ax.imshow(self.__images[0])
+    plt.axis("off")
+
+    fig = plt.figure("correlation")
+
+    for(i,(hist,k)) in enumerate(self.__results):
+        print k
+        print hist
+        ax = fig.add_subplot(1, len(self.__images), i + 1)
+        plt.imshow(self.__images[k])
+        plt.axis("off")
+
+    plt.show()
+

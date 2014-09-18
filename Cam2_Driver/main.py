@@ -27,7 +27,7 @@ def fetch_snapshots_sync(analyzer):
     frame_temp = []
     frame_metadata_temp = []
 
-    for i in range(5):
+    for i in range(1):
         frame_temp.append(frames)
         frame_metadata_temp.append(frame_metadata)
         analyzer.receive_frames(frame_temp,frame_metadata_temp)
@@ -82,7 +82,7 @@ camera_count = 5
 maximum_snapshots_to_keep = 3
 running_time = 30
 snapshot_interval = 5
-sync = False
+sync = True
 
 analyzer = MyAnalyzer(camera_count, maximum_snapshots_to_keep)
 analyzer.initialize()
